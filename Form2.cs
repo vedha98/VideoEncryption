@@ -16,5 +16,15 @@ namespace VideoEncryption
         {
             InitializeComponent();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if(textBox1.Text=="admin" && textBox2.Text == "admin") {
+
+            this.Hide();
+            Form1 f1 = new Form1();
+            f1.ShowDialog();
+        }
+        }
     }
 }

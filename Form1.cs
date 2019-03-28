@@ -28,7 +28,14 @@ namespace VideoEncryption
 
         private void button2_Click(object sender, EventArgs e)
         {
-            EncryptFile(openFileDialog1.FileName, openFileDialog1.FileName+"en.enc");
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                EncryptFile(openFileDialog1.FileName, openFileDialog1.FileName + "en.enc");
+            }
+            else {
+                System.Windows.Forms.MessageBox.Show("Please select File");
+
+            }
         }
             private const string SKey = "_?73^?dVT3st5har3";
         private const string SaltKey = "!2S@LT&KT3st5har3EY";
@@ -118,7 +125,14 @@ namespace VideoEncryption
      
         private void button3_Click(object sender, EventArgs e)
         {
-            DecryptFile(openFileDialog1.FileName,openFileDialog1.FileName.Replace(".enc",""));
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                DecryptFile(openFileDialog1.FileName, openFileDialog1.FileName.Replace(".enc", ""));
+            }
+            else {
+                System.Windows.Forms.MessageBox.Show("Please select File");
+            }
+            
         }
     }
 }
