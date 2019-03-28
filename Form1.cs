@@ -58,10 +58,11 @@ namespace VideoEncryption
             }
         }
       
-        public static string tempFile = Path.GetTempFileName() + String.Format("{0:d9}", (DateTime.Now.Ticks / 10) % 1000000000);
+        
         public static void DecryptFile(string srcFilename, string destFilename)
         {
-            var aes = new AesManaged();
+            var tempFile = Path.GetTempFileName()+".mp4";
+        var aes = new AesManaged();
             aes.BlockSize = aes.LegalBlockSizes[0].MaxSize;
             aes.KeySize = aes.LegalKeySizes[0].MaxSize;
             var salt = Encoding.UTF7.GetBytes(SaltKey);
@@ -73,32 +74,48 @@ namespace VideoEncryption
             if (File.Exists(@tempFile)) {
                 File.Delete(tempFile);
             }
-            using (var dest = new FileStream(tempFile, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-                {
-                    using (var cryptoStream = new CryptoStream(dest, transform, CryptoStreamMode.Write))
+            var dest = new FileStream(tempFile, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
+
+            var cryptoStream = new CryptoStream(dest, transform, CryptoStreamMode.Write);
+                    
+                try { 
+     
+                    using (var source = new FileStream(srcFilename, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
-                        try
-                        {
-                            using (var source = new FileStream(srcFilename, FileMode.Open, FileAccess.Read, FileShare.Read))
-                            {
-                                source.CopyTo(cryptoStream);
-                            }
-                        }
-                        catch (CryptographicException exception)
-                        {
-                            throw new ApplicationException("Decryption failed.", exception);
-                        }
+                        source.CopyTo(cryptoStream);
+
                     }
-                Process.Start(tempFile);
-            }
+                
+                    Process.Start(tempFile).WaitForExit();
+
+
+                }
+                catch (CryptographicException exception)
+                {
+                    throw new ApplicationException("Decryption failed.", exception);
+                }
+                finally {
+                try
+                {
+
+                    cryptoStream.Dispose();
+                    dest.Dispose();
+                    File.Delete(tempFile);
+                }
+                catch (Exception e) { }
+                     
+                    
+                }
+                       
+                    
+                    
+                
+            
 
                 
             
         }
-       static void OnProcessExit(object sender, EventArgs e)
-        {
-            File.Delete(tempFile);
-        }
+     
         private void button3_Click(object sender, EventArgs e)
         {
             DecryptFile(openFileDialog1.FileName,openFileDialog1.FileName.Replace(".enc",""));
