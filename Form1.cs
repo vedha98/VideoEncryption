@@ -54,7 +54,7 @@ namespace VideoEncryption
             aes.BlockSize = aes.LegalBlockSizes[0].MaxSize;
             aes.KeySize = aes.LegalKeySizes[0].MaxSize;
             var salt = Encoding.UTF7.GetBytes(SaltKey);
-            FileStream fs = new FileStream("EncryptedFile.txt", FileMode.Create, FileAccess.Write);
+            
             var key = new Rfc2898DeriveBytes(SKey, salt, Iterations);
             aes.Key = key.GetBytes(aes.KeySize / 8);
             aes.IV = key.GetBytes(aes.BlockSize / 8);
