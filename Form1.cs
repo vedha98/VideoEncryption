@@ -10,7 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.DirectX.AudioVideoPlayback;
+
 
 namespace VideoEncryption
 {
@@ -28,9 +28,16 @@ namespace VideoEncryption
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (openFileDialog1.ShowDialog() == DialogResult.OK )
             {
-                EncryptFile(openFileDialog1.FileName, openFileDialog1.FileName + "en.enc");
+                if (!openFileDialog1.FileName.Contains(".enc"))
+                {
+                    EncryptFile(openFileDialog1.FileName, openFileDialog1.FileName + ".enc");
+                }
+                else {
+                    System.Windows.Forms.MessageBox.Show("File already Encrypted");
+                }
+               
             }
             else {
                 System.Windows.Forms.MessageBox.Show("Please select File");
@@ -53,6 +60,10 @@ namespace VideoEncryption
             aes.IV = key.GetBytes(aes.BlockSize / 8);
             aes.Mode = CipherMode.CBC;
             ICryptoTransform transform = aes.CreateEncryptor(aes.Key, aes.IV);
+            if (File.Exists(destFilename))
+            {
+                File.Delete(destFilename);
+            }
             using (var dest = new FileStream(destFilename, FileMode.CreateNew, FileAccess.Write, FileShare.None))
             {
                 using (var cryptoStream = new CryptoStream(dest, transform, CryptoStreamMode.Write))
