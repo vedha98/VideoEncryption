@@ -25,7 +25,7 @@ const port = process.env.PORT || 8080;
 
 app.use(cors());
 //static folders
-app.use(express.static(path.join(__dirname, 'client')));
+
 
 //body parser middleware
 app.use(bodyParser.json());
@@ -45,5 +45,5 @@ app.get("*", (req, res) => {
 
 
 app.listen(port, () => {
-    console.log("running on port 3000");
+    console.log("running on port 8080");
 });
